@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import EventCard from './EventCard';
+import RecipeCard from './RecipeCard'; // ✅ Nombre correcto
 import { describe, it, expect } from 'vitest';
 
 // Datos mock de una receta para las pruebas
@@ -15,11 +15,11 @@ const mockReceta = {
   imagen: "cazuela.jpg"
 };
 
-describe('EventCard Component', () => {
+describe('RecipeCard Component', () => {
   it('renderiza correctamente la información de la receta', () => {
     render(
       <BrowserRouter>
-        <EventCard evento={mockReceta} />
+        <RecipeCard evento={mockReceta} />
       </BrowserRouter>
     );
 
@@ -47,7 +47,7 @@ describe('EventCard Component', () => {
      const recetaSinImagen = { ...mockReceta, imagen: null };
      render(
       <BrowserRouter>
-        <EventCard evento={recetaSinImagen} />
+        <RecipeCard evento={recetaSinImagen} />
       </BrowserRouter>
     );
     
@@ -59,7 +59,7 @@ describe('EventCard Component', () => {
     // Caso Dificultad Fácil
     const { unmount } = render(
         <BrowserRouter>
-          <EventCard evento={{ ...mockReceta, dificultad: 'Fácil' }} />
+          <RecipeCard evento={{ ...mockReceta, dificultad: 'Fácil' }} />
         </BrowserRouter>
     );
     expect(screen.getByText('Fácil')).toHaveClass('text-success');
@@ -68,7 +68,7 @@ describe('EventCard Component', () => {
     // Caso Dificultad Difícil
     render(
         <BrowserRouter>
-          <EventCard evento={{ ...mockReceta, dificultad: 'Difícil' }} />
+          <RecipeCard evento={{ ...mockReceta, dificultad: 'Difícil' }} />
         </BrowserRouter>
     );
     expect(screen.getByText('Difícil')).toHaveClass('text-danger');

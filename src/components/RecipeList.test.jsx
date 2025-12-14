@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import EventList from './EventList';
+import RecipeList from './RecipeList'; // ✅ Nombre correcto
 import { server } from '../mocks/server';
 import { http, HttpResponse } from 'msw';
 import { describe, it, expect, beforeAll, afterEach, afterAll } from 'vitest';
@@ -10,11 +10,11 @@ beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
-describe('EventList Component', () => {
+describe('RecipeList Component', () => {
   it('muestra el indicador de carga inicialmente', () => {
     render(
       <BrowserRouter>
-        <EventList />
+        <RecipeList />
       </BrowserRouter>
     );
     // Verificamos que aparezca el texto "Cargando..." (visually-hidden)
@@ -24,7 +24,7 @@ describe('EventList Component', () => {
   it('renderiza la lista de recetas correctamente desde la API', async () => {
     render(
       <BrowserRouter>
-        <EventList />
+        <RecipeList />
       </BrowserRouter>
     );
 
@@ -48,7 +48,7 @@ describe('EventList Component', () => {
 
     render(
       <BrowserRouter>
-        <EventList />
+        <RecipeList />
       </BrowserRouter>
     );
 

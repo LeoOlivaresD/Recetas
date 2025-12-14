@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from '../pages/Home';
-import EventPage from '../pages/RecipePage';
+import RecipePage from '../pages/RecipePage'; // ✅ Cambiar EventPage por RecipePage
 import Footer from './Footer';
 
 export default function AppRoutes() {
@@ -10,7 +10,7 @@ export default function AppRoutes() {
         <main className="flex-grow-1">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/evento/:id" element={<EventPage />} />
+            <Route path="/evento/:id" element={<RecipePage />} /> {/* ✅ Usar RecipePage */}
           </Routes>
         </main>
         <Footer />

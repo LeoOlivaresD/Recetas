@@ -79,7 +79,8 @@ const GET_RECETA = gql`
   }
 `;
 
-export default function EventPage() {
+// ✅ CAMBIO IMPORTANTE: Renombrar función de EventPage a RecipePage
+export default function RecipePage() {
   const { id } = useParams();
   const [mostrarModal, setMostrarModal] = useState(false);
   const [guardadoExitoso, setGuardadoExitoso] = useState(false);
@@ -99,7 +100,7 @@ export default function EventPage() {
     if (!isDevelopment) {
       const cargarReceta = async () => {
         setCargandoProd(true);
-        await new Promise(resolve => setTimeout(resolve, 500)); // Simular delay
+        await new Promise(resolve => setTimeout(resolve, 500));
         
         const recetaEncontrada = recetasMock.find(r => r.id === parseInt(id));
         if (recetaEncontrada) {
@@ -130,7 +131,7 @@ export default function EventPage() {
 
   if (cargando) return (
     <div className="d-flex justify-content-center align-items-center min-vh-100" style={{
-      background: 'linear-gradient(180deg, #fff1eb 0%, #ace0f9 100%)' // Fondo más claro para recetas
+      background: 'linear-gradient(180deg, #fff1eb 0%, #ace0f9 100%)'
     }}>
       <div className="spinner-border text-primary" role="status">
         <span className="visually-hidden">Cargando...</span>
@@ -176,7 +177,6 @@ export default function EventPage() {
           ← Volver a Recetas
         </Link>
 
-        {/* Badge mostrando API usada */}
         <div className="mb-3" style={{ textAlign: 'center' }}>
           <span style={{
             background: 'rgba(245, 158, 11, 0.2)',
@@ -287,7 +287,6 @@ export default function EventPage() {
         </div>
       </div>
 
-      {/* Modal */}
       {mostrarModal && (
         <div style={{
           position: 'fixed',
