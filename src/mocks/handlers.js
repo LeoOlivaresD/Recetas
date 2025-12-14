@@ -14,7 +14,7 @@ const recetas = [
     metodo: "Cocer la carne con verduras, agregar papas y zapallo, finalmente el choclo y arroz.",
     tiempo: "90 min",
     precio: 8000, // Mantenemos precio para compatibilidad temporal
-    imagen: "https://images.unsplash.com/photo-1590235967280-c0490b791176?q=80&w=600&auto=format&fit=crop"
+    imagen: "images/cazuela.jpeg"
   },
   {
     id: 2,
@@ -27,7 +27,7 @@ const recetas = [
     metodo: "Sofreír cebolla y carne, agregar papas y zapallo cocidos y molidos, finalizar con acelga.",
     tiempo: "45 min",
     precio: 5000,
-    imagen: "https://images.unsplash.com/photo-1599307773295-a22a364be933?q=80&w=600&auto=format&fit=crop"
+    imagen: "images/charquican.jpg"
   },
   {
     id: 3,
@@ -40,7 +40,7 @@ const recetas = [
     metodo: "Batir ingredientes, verter sobre molde caramelizado y hornear a baño maría.",
     tiempo: "60 min",
     precio: 3000,
-    imagen: "https://images.unsplash.com/photo-1598379057639-646cc274092f?q=80&w=600&auto=format&fit=crop"
+    imagen: "images/lecheAsada.jpg"
   },
   {
     id: 4,
@@ -53,7 +53,7 @@ const recetas = [
     metodo: "Preparar el pino el día anterior. Hacér la masa, rellenar y hornear.",
     tiempo: "120 min",
     precio: 2000,
-    imagen: "https://images.unsplash.com/photo-1623963229712-4293c042296d?q=80&w=600&auto=format&fit=crop"
+    imagen: "images/empanadas.avif"
   }
 ];
 

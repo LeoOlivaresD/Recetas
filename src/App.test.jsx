@@ -1,17 +1,13 @@
-import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
-import Home from './pages/Home';
+import App from './App';
+import { describe, it, expect } from 'vitest';
 
 describe('App Component - Test de Configuración', () => {
   it('debería renderizar la página Home correctamente', () => {
-    render(
-      <MemoryRouter>
-        <Home />
-      </MemoryRouter>
-    );
-    
-    // Verificar que el título principal esté presente
-    expect(screen.getByText(/Centro de Eventos/i)).toBeInTheDocument();
+    // Renderizamos App directamente, ya que AppRoutes contiene el Router
+    render(<App />);
+
+    // Verificamos que cargue el título de tu aplicación
+    expect(screen.getByText(/Recetario Maestro/i)).toBeInTheDocument();
   });
 });

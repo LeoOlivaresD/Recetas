@@ -1,7 +1,8 @@
 import { useParams, Link } from 'react-router-dom';
-import { gql } from '@apollo/client';
+import { gql, useQuery } from '@apollo/client'; // Importación estándar
+import { useState, useEffect } from 'react'
 import { useQuery } from '@apollo/client/react';
-import { useState, useEffect } from 'react';
+
 
 // Datos mock para producción (mismos que en handlers.js)
 const recetasMock = [
@@ -16,7 +17,7 @@ const recetasMock = [
     metodo: "Cocer la carne con verduras, agregar papas y zapallo, finalmente el choclo y arroz.",
     tiempo: "90 min",
     precio: 8000,
-    imagen: "/Recetas/images/cazuela.jpeg"
+    imagen: "images/cazuela.jpeg"
   },
   {
     id: 2,
@@ -29,7 +30,7 @@ const recetasMock = [
     metodo: "Sofreír cebolla y carne, agregar papas y zapallo cocidos y molidos, finalizar con acelga.",
     tiempo: "45 min",
     precio: 5000,
-    imagen: "/Recetas/images/charquican.jpg"
+    imagen: "images/charquican.jpg"
   },
   {
     id: 3,
@@ -42,7 +43,7 @@ const recetasMock = [
     metodo: "Batir ingredientes, verter sobre molde caramelizado y hornear a baño maría.",
     tiempo: "60 min",
     precio: 3000,
-    imagen: "/Recetas/images/lecheAsada.jpg"
+    imagen: "images/lecheAsada.jpg"
   },
   {
     id: 4,
@@ -55,7 +56,7 @@ const recetasMock = [
     metodo: "Preparar el pino el día anterior. Hacér la masa, rellenar y hornear.",
     tiempo: "120 min",
     precio: 2000,
-    imagen: "/Recetas/images/empanadas.avif"
+    imagen: "images/empanadas.avif"
   }
 ];
 

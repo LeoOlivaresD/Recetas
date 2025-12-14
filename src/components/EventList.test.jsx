@@ -1,83 +1,58 @@
-import { describe, it, expect, beforeAll, afterEach, afterAll, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
+import EventList from './EventList';
+import { server } from '../mocks/server';
+import { http, HttpResponse } from 'msw';
+import { describe, it, expect, beforeAll, afterEach, afterAll } from 'vitest';
+
+// Configuración del ciclo de vida del servidor de pruebas
+beforeAll(() => server.listen());
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
 
 describe('EventList Component', () => {
-  let fetchMock;
-
-  beforeAll(() => {
-    fetchMock = global.fetch;
+  it('muestra el indicador de carga inicialmente', () => {
+    render(
+      <BrowserRouter>
+        <EventList />
+      </BrowserRouter>
+    );
+    // Verificamos que aparezca el texto "Cargando..." (visually-hidden)
+    expect(screen.getByText(/cargando/i)).toBeInTheDocument();
   });
 
-  afterEach(() => {
-    global.fetch = fetchMock;
-    vi.unstubAllEnvs();
-    vi.resetModules();
+  it('renderiza la lista de recetas correctamente desde la API', async () => {
+    render(
+      <BrowserRouter>
+        <EventList />
+      </BrowserRouter>
+    );
+
+    // Esperamos a que MSW responda y se muestren los datos
+    // Buscamos el título de una de las recetas definidas en handlers.js
+    const recetaTitulo = await screen.findByText('Cazuela de Vacuno');
+    expect(recetaTitulo).toBeInTheDocument();
+
+    // Verificamos que aparezcan otras recetas
+    expect(await screen.findByText('Charquicán')).toBeInTheDocument();
+    expect(await screen.findByText('Leche Asada')).toBeInTheDocument();
   });
 
-  it('debería renderizar la lista de eventos en modo Desarrollo', async () => {
-    vi.stubEnv('DEV', true);
-    const EventList = (await import('./EventList')).default;
-    
-    global.fetch = vi.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve([
-          { id: 1, titulo: "Evento Test", categoria: "Test", fecha: "2025", precio: 100, imagen: "test.jpg" }
-        ]),
+  it('maneja errores del servidor correctamente', async () => {
+    // Sobrescribimos el handler para forzar un error 500 solo en este test
+    server.use(
+      http.get('/api/recetas', () => {
+        return new HttpResponse(null, { status: 500 });
       })
     );
 
     render(
-      <MemoryRouter>
+      <BrowserRouter>
         <EventList />
-      </MemoryRouter>
+      </BrowserRouter>
     );
 
-    await waitFor(() => {
-      expect(screen.getByText('Evento Test')).toBeInTheDocument();
-      expect(screen.getByText(/REST API/i)).toBeInTheDocument();
-    });
-  });
-
-  it('debería mostrar error si la API falla', async () => {
-    vi.stubEnv('DEV', true);
-    const EventList = (await import('./EventList')).default;
-
-    global.fetch = vi.fn(() =>
-      Promise.resolve({
-        ok: false,
-        status: 500
-      })
-    );
-
-    render(
-      <MemoryRouter>
-        <EventList />
-      </MemoryRouter>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByRole('alert')).toBeInTheDocument();
-      expect(screen.getByText(/Error:/i)).toBeInTheDocument();
-    });
-  });
-
-  it('debería cargar datos de respaldo en modo Producción', async () => {
-    vi.stubEnv('DEV', false);
-    const EventList = (await import('./EventList')).default;
-
-    render(
-      <MemoryRouter>
-        <EventList />
-      </MemoryRouter>
-    );
-
-    await waitFor(() => {
-      // CORRECCIÓN AQUÍ: Usamos getByRole para buscar especificamente el título h5
-      expect(screen.getByRole('heading', { name: /Concierto de Rock/i })).toBeInTheDocument();
-      
-      expect(screen.getByText(/Producción/i)).toBeInTheDocument();
-    });
+    // Esperamos a que aparezca el mensaje de error
+    expect(await screen.findByText(/Error al cargar recetas/i)).toBeInTheDocument();
   });
 });

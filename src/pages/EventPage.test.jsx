@@ -1,166 +1,77 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
-import { MemoryRouter, Routes, Route } from 'react-router-dom';
-import { ApolloProvider } from '@apollo/client/react';
-import { ApolloClient, InMemoryCache, ApolloLink, Observable } from '@apollo/client';
+import { render, screen } from '@testing-library/react';
+import { describe, it, expect, beforeAll, afterEach, afterAll } from 'vitest';
+import { ApolloClient, InMemoryCache, ApolloProvider, HttpLink } from '@apollo/client';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import EventPage from './EventPage';
+import { server } from '../mocks/server';
+import { graphql, HttpResponse } from 'msw';
 
-// Mock de datos de prueba
-const eventoMock = {
-  id: 1,
-  titulo: "Concierto de Rock",
-  categoria: "Conciertos",
-  fecha: "2025-12-15",
-  lugar: "Estadio Nacional",
-  descripcion: "Un increíble concierto de rock en vivo",
-  artista: "The Rockers",
-  ponente: null,
-  precio: 50,
-  imagen: "/images/concierto-rock.jpg"
-};
-
-// Helper para crear un cliente Apollo mock
-const createMockApolloClient = (mockResponse) => {
-  const mockLink = new ApolloLink((operation) => {
-    return new Observable((observer) => {
-      if (mockResponse.error) {
-        observer.error(mockResponse.error);
-      } else {
-        setTimeout(() => {
-          observer.next(mockResponse);
-          observer.complete();
-        }, mockResponse.delay || 0);
-      }
-    });
-  });
-
+// Configurar Apollo Client para pruebas
+const createTestClient = () => {
   return new ApolloClient({
-    link: mockLink,
-    cache: new InMemoryCache(),
+    link: new HttpLink({ uri: 'http://localhost:3000/graphql', fetch }),
+    cache: new InMemoryCache({ addTypename: false }),
   });
 };
 
-// Helper para renderizar con router y Apollo
-const renderEventPage = (mockResponse, initialRoute = '/evento/1') => {
-  const client = createMockApolloClient(mockResponse);
-  
-  return render(
-    <ApolloProvider client={client}>
-      <MemoryRouter initialEntries={[initialRoute]}>
-        <Routes>
-          <Route path="/evento/:id" element={<EventPage />} />
-        </Routes>
-      </MemoryRouter>
-    </ApolloProvider>
-  );
-};
+// Configuración de MSW
+beforeAll(() => server.listen());
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
 
-describe('EventPage Component', () => {
-  beforeEach(() => {
-    vi.stubEnv('DEV', true);
+describe('EventPage Component (Detalle de Receta)', () => {
+  it('muestra el estado de carga inicialmente', () => {
+    render(
+      <ApolloProvider client={createTestClient()}>
+        <MemoryRouter initialEntries={['/evento/1']}>
+          <Routes>
+            <Route path="/evento/:id" element={<EventPage />} />
+          </Routes>
+        </MemoryRouter>
+      </ApolloProvider>
+    );
+    // Verificamos el spinner o texto de carga
+    expect(screen.getByText(/cargando/i)).toBeInTheDocument();
   });
 
-  it('debería mostrar el indicador de carga mientras obtiene datos', () => {
-    const mockResponse = {
-      data: { evento: eventoMock },
-      delay: 1000
-    };
-    renderEventPage(mockResponse);
-    expect(screen.getByRole('status')).toBeInTheDocument();
-  });
+  it('renderiza correctamente los detalles de la receta desde GraphQL', async () => {
+    render(
+      <ApolloProvider client={createTestClient()}>
+        <MemoryRouter initialEntries={['/evento/1']}>
+          <Routes>
+            <Route path="/evento/:id" element={<EventPage />} />
+          </Routes>
+        </MemoryRouter>
+      </ApolloProvider>
+    );
 
-  it('debería renderizar correctamente los detalles del evento', async () => {
-    const mockResponse = { data: { evento: eventoMock } };
-    renderEventPage(mockResponse);
-
-    await waitFor(() => {
-      expect(screen.getByText('Concierto de Rock')).toBeInTheDocument();
-    }, { timeout: 3000 });
-
-    expect(screen.getByText('Conciertos')).toBeInTheDocument();
-    expect(screen.getByText(/\$50/i)).toBeInTheDocument();
-  });
-
-  it('debería mostrar error cuando falla la consulta', async () => {
-    const mockResponse = { error: new Error('Error al obtener el evento') };
-    renderEventPage(mockResponse);
-
-    await waitFor(() => {
-      expect(screen.getByText(/Error: Error al obtener el evento/i)).toBeInTheDocument();
-    });
-  });
-
-  // --- TESTS DE INTERACCIÓN (Cobertura de Lógica) ---
-
-  it('debería manejar el flujo completo del modal: abrir, cambiar cantidad y comprar', async () => {
-    const mockResponse = { data: { evento: eventoMock } };
-    renderEventPage(mockResponse);
-
-    // Esperar carga
-    await waitFor(() => expect(screen.getByText('Concierto de Rock')).toBeInTheDocument());
-
-    // 1. Abrir Modal
-    const btnAbrir = screen.getAllByText(/🎟️ Comprar Entrada/i)[0]; // Botón de la página
-    fireEvent.click(btnAbrir);
+    // Esperar a que aparezca el título (definido en handlers.js)
+    expect(await screen.findByText('Cazuela de Vacuno')).toBeInTheDocument();
     
-    await waitFor(() => {
-        expect(screen.getByText('Cantidad de entradas:')).toBeInTheDocument();
-    });
-
-    // 2. Verificar precio inicial (1 entrada = $50)
-    expect(screen.getByText(/Total: \$50/i)).toBeInTheDocument();
-
-    // 3. Incrementar cantidad (Click en +)
-    const btnMas = screen.getByText('+');
-    fireEvent.click(btnMas);
-    
-    // Verificar actualización de input y precio total (2 entradas = $100)
-    const input = screen.getByRole('spinbutton');
-    expect(input).toHaveValue(2);
-    expect(screen.getByText(/Total: \$100/i)).toBeInTheDocument();
-
-    // 4. Confirmar Compra
-    const btnConfirmar = screen.getByText(/Confirmar Compra/i);
-    fireEvent.click(btnConfirmar);
-
-    // 5. Verificar mensaje de éxito
-    await waitFor(() => {
-      expect(screen.getByText(/¡Compra exitosa!/i)).toBeInTheDocument();
-    });
-    expect(screen.getByText(/Se ha comprado 2 entradas por \$100/i)).toBeInTheDocument();
+    // Verificar detalles específicos
+    expect(screen.getByText('Media')).toBeInTheDocument();
+    expect(screen.getByText(/90 min/)).toBeInTheDocument();
   });
 
-  it('debería cerrar el modal al hacer clic en cancelar', async () => {
-    const mockResponse = { data: { evento: eventoMock } };
-    renderEventPage(mockResponse);
+  it('maneja el error cuando la receta no existe', async () => {
+    // Forzamos error en MSW
+    server.use(
+      graphql.query('GetRecetaById', () => {
+        return HttpResponse.json({ errors: [{ message: 'Receta no encontrada' }] });
+      })
+    );
 
-    await waitFor(() => expect(screen.getByText('Concierto de Rock')).toBeInTheDocument());
+    render(
+      <ApolloProvider client={createTestClient()}>
+        <MemoryRouter initialEntries={['/evento/999']}>
+          <Routes>
+            <Route path="/evento/:id" element={<EventPage />} />
+          </Routes>
+        </MemoryRouter>
+      </ApolloProvider>
+    );
 
-    // Abrir
-    fireEvent.click(screen.getAllByText(/🎟️ Comprar Entrada/i)[0]);
-    await waitFor(() => expect(screen.getByText('Cantidad de entradas:')).toBeInTheDocument());
-
-    // Cancelar
-    fireEvent.click(screen.getByText(/Cancelar/i));
-
-    // Verificar cierre
-    await waitFor(() => {
-      expect(screen.queryByText('Cantidad de entradas:')).not.toBeInTheDocument();
-    });
-  });
-
-  it('debería validar los límites de cantidad (min 1)', async () => {
-    const mockResponse = { data: { evento: eventoMock } };
-    renderEventPage(mockResponse);
-
-    await waitFor(() => expect(screen.getByText('Concierto de Rock')).toBeInTheDocument());
-    fireEvent.click(screen.getAllByText(/🎟️ Comprar Entrada/i)[0]);
-
-    const btnMenos = screen.getByText('−'); // Símbolo matemático usado en tu componente
-    const input = screen.getByRole('spinbutton');
-
-    // Intentar bajar de 1
-    fireEvent.click(btnMenos);
-    expect(input).toHaveValue(1); // No debería cambiar a 0
+    // Esperamos el mensaje de error
+    expect(await screen.findByText(/Error:/i)).toBeInTheDocument();
   });
 });

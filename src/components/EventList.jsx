@@ -11,7 +11,7 @@ const recetasMock = [
     fecha: "2023-10-01",
     descripcion: "Un clásico plato chileno ideal para el invierno.",
     precio: 8000,
-    imagen: "https://images.unsplash.com/photo-1590235967280-c0490b791176?q=80&w=600&auto=format&fit=crop"
+    imagen: "images/cazuela.jpeg"
   },
   {
     id: 2,
@@ -21,7 +21,7 @@ const recetasMock = [
     fecha: "2023-10-02",
     descripcion: "Guiso tradicional a base de zapallo y papas.",
     precio: 5000,
-    imagen: "https://images.unsplash.com/photo-1599307773295-a22a364be933?q=80&w=600&auto=format&fit=crop"
+    imagen: "images/charquican.jpg"
   },
   {
     id: 3,
@@ -31,7 +31,7 @@ const recetasMock = [
     fecha: "2023-10-03",
     descripcion: "Postre de leche y huevos horneado con caramelo.",
     precio: 3000,
-    imagen: "https://images.unsplash.com/photo-1598379057639-646cc274092f?q=80&w=600&auto=format&fit=crop"
+    imagen: "images/lecheAsada.jpg"
   },
   {
     id: 4,
@@ -41,7 +41,7 @@ const recetasMock = [
     fecha: "2023-09-18",
     descripcion: "Masa rellena de pino de carne, cebolla, huevo y aceituna.",
     precio: 2000,
-    imagen: "https://images.unsplash.com/photo-1623963229712-4293c042296d?q=80&w=600&auto=format&fit=crop"
+    imagen: "images/empanadas.avif"
   }
 ];
 

@@ -1,113 +1,76 @@
-import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import EventCard from './EventCard';
-import { fireEvent } from '@testing-library/react';
-// Mock de datos de prueba
-const eventoMock = {
+import { describe, it, expect } from 'vitest';
+
+// Datos mock de una receta para las pruebas
+const mockReceta = {
   id: 1,
-  titulo: "Concierto de Rock",
-  categoria: "Conciertos",
-  fecha: "2025-12-15",
-  lugar: "Estadio Nacional",
-  descripcion: "Un increíble concierto de rock en vivo",
-  precio: 50,
-  imagen: "/images/concierto-rock.jpg"
+  titulo: "Cazuela de Vacuno",
+  dificultad: "Media",
+  categoria: "Platos Principales",
+  fecha: "2023-10-01",
+  descripcion: "Un clásico plato chileno.",
+  precio: 8000,
+  imagen: "cazuela.jpg"
 };
 
 describe('EventCard Component', () => {
-  it('debería renderizar correctamente con todos los datos del evento', () => {
+  it('renderiza correctamente la información de la receta', () => {
     render(
-      <MemoryRouter>
-        <EventCard evento={eventoMock} />
-      </MemoryRouter>
+      <BrowserRouter>
+        <EventCard evento={mockReceta} />
+      </BrowserRouter>
     );
 
-    // Verificar que el título está presente
-    expect(screen.getByText('Concierto de Rock')).toBeInTheDocument();
+    // Verificar Título
+    expect(screen.getByText('Cazuela de Vacuno')).toBeInTheDocument();
     
-    // Verificar que la categoría está presente
-    expect(screen.getByText('Conciertos')).toBeInTheDocument();
-    
-    // Verificar que la descripción está presente
-    expect(screen.getByText(/Un increíble concierto de rock en vivo/i)).toBeInTheDocument();
-    
-    // Verificar que la fecha está presente
-    expect(screen.getByText(/2025-12-15/i)).toBeInTheDocument();
-    
-    // Verificar que el lugar está presente
-    expect(screen.getByText(/Estadio Nacional/i)).toBeInTheDocument();
-    
-    // Verificar que el precio está presente
-    expect(screen.getByText(/\$50/i)).toBeInTheDocument();
-  });
+    // Verificar Descripción
+    expect(screen.getByText('Un clásico plato chileno.')).toBeInTheDocument();
 
-  it('debería mostrar el botón "Ver Detalles"', () => {
-    render(
-      <MemoryRouter>
-        <EventCard evento={eventoMock} />
-      </MemoryRouter>
-    );
+    // Verificar Dificultad
+    expect(screen.getByText('Media')).toBeInTheDocument();
+    
+    // Verificar Categoría
+    expect(screen.getByText('Platos Principales')).toBeInTheDocument();
 
-    const boton = screen.getByText(/Ver Detalles/i);
-    expect(boton).toBeInTheDocument();
-  });
-
-  it('debería tener un link correcto hacia la página de detalles', () => {
-    render(
-      <MemoryRouter>
-        <EventCard evento={eventoMock} />
-      </MemoryRouter>
-    );
-
-    const link = screen.getByRole('link', { name: /Ver Detalles/i });
+    // Verificar Precio (usamos regex para ser flexibles con el formato)
+    expect(screen.getByText(/\$8000/)).toBeInTheDocument();
+    
+    // Verificar que el enlace apunta a la ruta correcta
+    const link = screen.getByRole('link', { name: /ver detalles/i });
     expect(link).toHaveAttribute('href', '/evento/1');
   });
 
-  it('debería renderizar correctamente sin imagen', () => {
-    const eventoSinImagen = { ...eventoMock, imagen: null };
-    
-    render(
-      <MemoryRouter>
-        <EventCard evento={eventoSinImagen} />
-      </MemoryRouter>
+  it('renderiza el placeholder cuando no hay imagen', () => {
+     const recetaSinImagen = { ...mockReceta, imagen: null };
+     render(
+      <BrowserRouter>
+        <EventCard evento={recetaSinImagen} />
+      </BrowserRouter>
     );
-
-    // Verificar que el título sigue presente
-    expect(screen.getByText('Concierto de Rock')).toBeInTheDocument();
+    
+    // Debería mostrar la inicial del título como placeholder
+    expect(screen.getByText('C')).toBeInTheDocument();
   });
-});
-it('debería manejar los eventos del mouse en la imagen', () => {
-  render(
-    <MemoryRouter>
-      <EventCard evento={eventoMock} />
-    </MemoryRouter>
-  );
-
-  const img = screen.getByAltText('Concierto de Rock');
   
-  // Simular hover (Mouse Enter)
-  fireEvent.mouseEnter(img);
-  expect(img).toHaveStyle('transform: scale(1.1)'); // Verifica el estilo inline
+  it('aplica la clase de color correcta según la dificultad', () => {
+    // Caso Dificultad Fácil
+    const { unmount } = render(
+        <BrowserRouter>
+          <EventCard evento={{ ...mockReceta, dificultad: 'Fácil' }} />
+        </BrowserRouter>
+    );
+    expect(screen.getByText('Fácil')).toHaveClass('text-success');
+    unmount();
 
-  // Simular salida (Mouse Leave)
-  fireEvent.mouseLeave(img);
-  expect(img).toHaveStyle('transform: scale(1)');
-});
-
-it('debería manejar error de carga de imagen', () => {
-  render(
-    <MemoryRouter>
-      <EventCard evento={eventoMock} />
-    </MemoryRouter>
-  );
-
-  const img = screen.getByAltText('Concierto de Rock');
-  // El div placeholder es el hermano siguiente
-  // Nota: en tu código el placeholder tiene el estilo inicial display: none
-  
-  fireEvent.error(img);
-  
-  // Al dar error, la imagen se oculta (display: none)
-  expect(img).toHaveStyle('display: none');
+    // Caso Dificultad Difícil
+    render(
+        <BrowserRouter>
+          <EventCard evento={{ ...mockReceta, dificultad: 'Difícil' }} />
+        </BrowserRouter>
+    );
+    expect(screen.getByText('Difícil')).toHaveClass('text-danger');
+  });
 });
