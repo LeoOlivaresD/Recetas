@@ -1,84 +1,76 @@
 import { useState, useEffect } from 'react';
 import EventCard from './EventCard';
 
-// Datos de respaldo para producción
-const eventosMock = [
+// Datos de respaldo para producción (Recetas)
+const recetasMock = [
   {
     id: 1,
-    titulo: "Concierto de Rock",
-    categoria: "Conciertos",
-    fecha: "2025-12-15",
-    lugar: "Estadio Nacional",
-    descripcion: "Un increíble concierto de rock en vivo con las mejores bandas del género",
-    artista: "The Rockers",
-    ponente: null,
-    precio: 50,
-    imagen: "/Front-Eventos/images/concierto-rock.jpg"
+    titulo: "Cazuela de Vacuno",
+    dificultad: "Media",
+    categoria: "Platos Principales",
+    fecha: "2023-10-01",
+    descripcion: "Un clásico plato chileno ideal para el invierno.",
+    precio: 8000,
+    imagen: "https://images.unsplash.com/photo-1590235967280-c0490b791176?q=80&w=600&auto=format&fit=crop"
   },
   {
     id: 2,
-    titulo: "Conferencia de Tecnología",
-    categoria: "Conferencias",
-    fecha: "2025-12-20",
-    lugar: "Centro de Convenciones",
-    descripcion: "Las últimas tendencias en tecnología e IA con expertos internacionales",
-    artista: null,
-    ponente: "Dr. Juan Silva",
-    precio: 30,
-    imagen: "/Front-Eventos/images/conferencia-tech.jpeg"
+    titulo: "Charquicán",
+    dificultad: "Fácil",
+    categoria: "Platos Principales",
+    fecha: "2023-10-02",
+    descripcion: "Guiso tradicional a base de zapallo y papas.",
+    precio: 5000,
+    imagen: "https://images.unsplash.com/photo-1599307773295-a22a364be933?q=80&w=600&auto=format&fit=crop"
   },
   {
     id: 3,
-    titulo: "Festival de Jazz",
-    categoria: "Conciertos",
-    fecha: "2025-12-25",
-    lugar: "Teatro Municipal",
-    descripcion: "Noches de jazz clásico y moderno con músicos profesionales",
-    artista: "Jazz Masters",
-    ponente: null,
-    precio: 40,
-    imagen: "/Front-Eventos/images/festival-jazz.jpg"
+    titulo: "Leche Asada",
+    dificultad: "Fácil",
+    categoria: "Postres",
+    fecha: "2023-10-03",
+    descripcion: "Postre de leche y huevos horneado con caramelo.",
+    precio: 3000,
+    imagen: "https://images.unsplash.com/photo-1598379057639-646cc274092f?q=80&w=600&auto=format&fit=crop"
   },
   {
     id: 4,
-    titulo: "Workshop de Diseño UX",
-    categoria: "Conferencias",
-    fecha: "2026-01-10",
-    lugar: "Centro de Innovación",
-    descripcion: "Aprende diseño UX/UI desde cero con ejercicios prácticos",
-    artista: null,
-    ponente: "María González",
-    precio: 25,
-    imagen: "/Front-Eventos/images/workshop-ux.webp"
+    titulo: "Empanadas de Pino",
+    dificultad: "Difícil",
+    categoria: "Platos Principales",
+    fecha: "2023-09-18",
+    descripcion: "Masa rellena de pino de carne, cebolla, huevo y aceituna.",
+    precio: 2000,
+    imagen: "https://images.unsplash.com/photo-1623963229712-4293c042296d?q=80&w=600&auto=format&fit=crop"
   }
 ];
 
 const isDevelopment = import.meta.env.DEV;
 
 export default function EventList() {
-  const [eventos, setEventos] = useState([]);
+  const [recetas, setRecetas] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const cargarEventos = async () => {
+    const cargarRecetas = async () => {
       try {
         setCargando(true);
         
         if (isDevelopment) {
-          // En desarrollo: usar MSW
-          console.log('%c API: REST - Cargando eventos con MSW', 'color: #10b981; font-weight: bold; font-size: 12px');
-          const response = await fetch('/api/eventos');
+          // En desarrollo: usar MSW interceptando la ruta de recetas
+          console.log('%c API: REST - Cargando recetas con MSW', 'color: #10b981; font-weight: bold; font-size: 12px');
+          const response = await fetch('/api/recetas');
           if (!response.ok) {
-            throw new Error('Error al cargar eventos');
+            throw new Error('Error al cargar recetas');
           }
           const datos = await response.json();
-          setEventos(datos);
+          setRecetas(datos);
         } else {
           // En producción: usar datos mock directos
           console.log('%c API: REST - Modo producción (sin MSW)', 'color: #10b981; font-weight: bold; font-size: 12px');
           await new Promise(resolve => setTimeout(resolve, 500)); // Simular delay
-          setEventos(eventosMock);
+          setRecetas(recetasMock);
         }
         
         console.log('%c API: REST - Datos cargados correctamente', 'color: #10b981; font-weight: bold; font-size: 12px');
@@ -90,7 +82,7 @@ export default function EventList() {
       }
     };
 
-    cargarEventos();
+    cargarRecetas();
   }, []);
 
   if (cargando) return (
@@ -125,9 +117,10 @@ export default function EventList() {
       </div>
 
       <div className="row g-4">
-        {eventos.map(evento => (
-          <div key={evento.id} className="col-lg-6 col-xl-4">
-            <EventCard evento={evento} />
+        {recetas.map(receta => (
+          <div key={receta.id} className="col-lg-6 col-xl-4">
+            {/* Pasamos el objeto receta como prop 'evento' para mantener compatibilidad con la tarjeta por ahora */}
+            <EventCard evento={receta} />
           </div>
         ))}
       </div>
