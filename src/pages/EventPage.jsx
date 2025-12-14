@@ -16,7 +16,7 @@ const recetasMock = [
     metodo: "Cocer la carne con verduras, agregar papas y zapallo, finalmente el choclo y arroz.",
     tiempo: "90 min",
     precio: 8000,
-    imagen: "/Recetas/images/cazuela.jpej"
+    imagen: "/Recetas/images/cazuela.jpeg"
   },
   {
     id: 2,
@@ -29,7 +29,7 @@ const recetasMock = [
     metodo: "Sofreír cebolla y carne, agregar papas y zapallo cocidos y molidos, finalizar con acelga.",
     tiempo: "45 min",
     precio: 5000,
-    imagen: "/Recetas/images/charquican.jpeg"
+    imagen: "/Recetas/images/charquican.jpg"
   },
   {
     id: 3,
