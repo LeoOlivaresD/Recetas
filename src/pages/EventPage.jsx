@@ -1,7 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import { gql, useQuery } from '@apollo/client'; // Importación estándar
 import { useState, useEffect } from 'react'
-import { useQuery } from '@apollo/client/react';
 
 
 // Datos mock para producción (mismos que en handlers.js)
