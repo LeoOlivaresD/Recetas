@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import EventCard from './EventCard';
+import EventCard from './RecipeCard';
 
 // Datos de respaldo para producción (Recetas)
 const recetasMock = [

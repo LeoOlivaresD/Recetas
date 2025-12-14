@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from '../pages/Home';
-import EventPage from '../pages/EventPage';
+import EventPage from '../pages/RecipePage';
 import Footer from './Footer';
 
 export default function AppRoutes() {

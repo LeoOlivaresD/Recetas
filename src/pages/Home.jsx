@@ -1,4 +1,4 @@
-import EventList from '../components/EventList';
+import EventList from '../components/RecipeList';
 
 export default function Home() {
   return (
