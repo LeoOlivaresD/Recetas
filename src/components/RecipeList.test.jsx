@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import RecipeList from './RecipeList'; // ✅ Nombre correcto
+import RecipeList from './RecipeList';
 import { server } from '../mocks/server';
 import { http, HttpResponse } from 'msw';
 import { describe, it, expect, beforeAll, afterEach, afterAll } from 'vitest';

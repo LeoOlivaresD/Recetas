@@ -74,7 +74,7 @@ describe('RecipeCard Component', () => {
     expect(screen.getByText('Difícil')).toHaveClass('text-danger');
   });
 
-  // ✅ NUEVO TEST: Cubrir event handlers de la imagen
+  //Cubre event handlers de la imagen
   it('maneja el evento onError de la imagen correctamente', () => {
     render(
       <BrowserRouter>

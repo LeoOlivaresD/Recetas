@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import EventList from '../components/RecipeList';
 
 export default function Home() {
-  // ✅ Agregamos lógica rastreable para V8
+  //Agregamos lógica rastreable para V8
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {

@@ -94,7 +94,7 @@ describe('RecipePage Component (Detalle de Receta)', () => {
     expect(screen.getByText(/Volver a Recetas/i)).toBeInTheDocument();
   });
 
-  // ✅ NUEVO: Test para estado de carga
+  //Test para estado de carga
   it('muestra el indicador de carga mientras se obtienen los datos', () => {
     useQuery.mockReturnValue({
       loading: true,
@@ -114,7 +114,7 @@ describe('RecipePage Component (Detalle de Receta)', () => {
     expect(screen.getByRole('status')).toBeInTheDocument();
   });
 
-  // ✅ NUEVO: Test para estado de error
+  //Test para estado de error
   it('muestra un mensaje de error cuando falla la consulta', () => {
     useQuery.mockReturnValue({
       loading: false,
@@ -133,7 +133,7 @@ describe('RecipePage Component (Detalle de Receta)', () => {
     expect(screen.getByText(/Error: Error al cargar la receta/i)).toBeInTheDocument();
   });
 
-  // ✅ NUEVO: Test para receta no encontrada
+  //Test para receta no encontrada
   it('muestra un mensaje cuando no se encuentra la receta', () => {
     useQuery.mockReturnValue({
       loading: false,
@@ -152,7 +152,7 @@ describe('RecipePage Component (Detalle de Receta)', () => {
     expect(screen.getByText(/Receta no encontrada/i)).toBeInTheDocument();
   });
 
-  // ✅ NUEVO: Test para abrir el modal
+  //Test para abrir el modal
   it('abre el modal al hacer clic en el botón Guardar Receta', async () => {
     useQuery.mockReturnValue({
       loading: false,
@@ -179,7 +179,7 @@ describe('RecipePage Component (Detalle de Receta)', () => {
     expect(screen.getByText(/Estás a punto de guardar/i)).toBeInTheDocument();
   });
 
-  // ✅ NUEVO: Test para cerrar el modal con cancelar
+  //Test para cerrar el modal con cancelar
   it('cierra el modal al hacer clic en Cancelar', async () => {
     useQuery.mockReturnValue({
       loading: false,
@@ -212,7 +212,7 @@ describe('RecipePage Component (Detalle de Receta)', () => {
     });
   });
 
-    // ✅ NUEVO: Test para confirmar guardado
+    //Test para confirmar guardado
   it('muestra mensaje de éxito al confirmar guardado', async () => {
     useQuery.mockReturnValue({
       loading: false,
@@ -250,7 +250,7 @@ describe('RecipePage Component (Detalle de Receta)', () => {
     }, { timeout: 3000 });
   });
 
-    // ✅ NUEVO: Test para verificar todos los campos de la receta
+    //Test para verificar todos los campos de la receta
   it('renderiza todos los detalles de la receta correctamente', async () => {
     useQuery.mockReturnValue({
       loading: false,
@@ -281,7 +281,7 @@ describe('RecipePage Component (Detalle de Receta)', () => {
     expect(screen.getByText(/Cocer la carne/i)).toBeInTheDocument();
   });
 
-  // ✅ NUEVO: Test para diferentes niveles de dificultad
+  //Test para diferentes niveles de dificultad
   it('muestra el color correcto según la dificultad', async () => {
     const recetaFacil = { ...mockReceta, dificultad: 'Fácil' };
     
