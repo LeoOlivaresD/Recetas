@@ -1,6 +1,6 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import RecipeCard from './RecipeCard'; // ✅ Nombre correcto
+import RecipeCard from './RecipeCard';
 import { describe, it, expect } from 'vitest';
 
 // Datos mock de una receta para las pruebas
@@ -35,7 +35,7 @@ describe('RecipeCard Component', () => {
     // Verificar Categoría
     expect(screen.getByText('Platos Principales')).toBeInTheDocument();
 
-    // Verificar Precio (usamos regex para ser flexibles con el formato)
+    // Verificar Precio
     expect(screen.getByText(/\$8000/)).toBeInTheDocument();
     
     // Verificar que el enlace apunta a la ruta correcta
@@ -44,8 +44,8 @@ describe('RecipeCard Component', () => {
   });
 
   it('renderiza el placeholder cuando no hay imagen', () => {
-     const recetaSinImagen = { ...mockReceta, imagen: null };
-     render(
+    const recetaSinImagen = { ...mockReceta, imagen: null };
+    render(
       <BrowserRouter>
         <RecipeCard evento={recetaSinImagen} />
       </BrowserRouter>
@@ -58,19 +58,57 @@ describe('RecipeCard Component', () => {
   it('aplica la clase de color correcta según la dificultad', () => {
     // Caso Dificultad Fácil
     const { unmount } = render(
-        <BrowserRouter>
-          <RecipeCard evento={{ ...mockReceta, dificultad: 'Fácil' }} />
-        </BrowserRouter>
+      <BrowserRouter>
+        <RecipeCard evento={{ ...mockReceta, dificultad: 'Fácil' }} />
+      </BrowserRouter>
     );
     expect(screen.getByText('Fácil')).toHaveClass('text-success');
     unmount();
 
     // Caso Dificultad Difícil
     render(
-        <BrowserRouter>
-          <RecipeCard evento={{ ...mockReceta, dificultad: 'Difícil' }} />
-        </BrowserRouter>
+      <BrowserRouter>
+        <RecipeCard evento={{ ...mockReceta, dificultad: 'Difícil' }} />
+      </BrowserRouter>
     );
     expect(screen.getByText('Difícil')).toHaveClass('text-danger');
+  });
+
+  // ✅ NUEVO TEST: Cubrir event handlers de la imagen
+  it('maneja el evento onError de la imagen correctamente', () => {
+    render(
+      <BrowserRouter>
+        <RecipeCard evento={mockReceta} />
+      </BrowserRouter>
+    );
+
+    const imagen = screen.getByAltText('Cazuela de Vacuno');
+    
+    // Simular error de carga de imagen
+    fireEvent.error(imagen);
+    
+    // Verificar que la imagen se oculta
+    expect(imagen.style.display).toBe('none');
+  });
+
+  it('maneja los eventos hover de la imagen correctamente', () => {
+    render(
+      <BrowserRouter>
+        <RecipeCard evento={mockReceta} />
+      </BrowserRouter>
+    );
+
+    const imagen = screen.getByAltText('Cazuela de Vacuno');
+    
+    // Verificar estado inicial
+    expect(imagen.style.transform).toBe('');
+    
+    // Simular mouse enter
+    fireEvent.mouseEnter(imagen);
+    expect(imagen.style.transform).toBe('scale(1.1)');
+    
+    // Simular mouse leave
+    fireEvent.mouseLeave(imagen);
+    expect(imagen.style.transform).toBe('scale(1)');
   });
 });
