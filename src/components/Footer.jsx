@@ -11,10 +11,10 @@ export default function Footer() {
         <div className="row mb-4">
           <div className="col-md-4 mb-3">
             <h5 className="fw-bold mb-3" style={{ color: '#667eea' }}>
-              Centro de Eventos
+              Recetas a tu alcance
             </h5>
             <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.95rem' }}>
-              Descubre los mejores eventos y experiencias en tu ciudad. Conecta con artistas, conferencistas y comunidades.
+              Descubre las mejores recetas y experimenta en la cocina con ellas
             </p>
           </div>
 
@@ -34,7 +34,7 @@ export default function Footer() {
                 <a href="#" style={{ color: 'rgba(255,255,255,0.7)', textDecoration: 'none', transition: 'color 0.3s ease' }}
                    onMouseEnter={(e) => e.target.style.color = '#667eea'}
                    onMouseLeave={(e) => e.target.style.color = 'rgba(255,255,255,0.7)'}>
-                  Eventos
+                  Recetas
                 </a>
               </li>
               <li style={{ marginBottom: '0.5rem' }}>
