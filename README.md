@@ -97,9 +97,9 @@ Development Tools:
 
 ---
 
-## 🧪 Testing y Cobertura
+## Testing y Cobertura
 
-### 📊 **Cobertura de Código Actual**
+### **Cobertura de Código Actual**
 
 ```
 ═══════════════════════════════════════════════════════════
@@ -529,7 +529,7 @@ export default defineConfig({
 ---
 
 
-## 👨‍💻 Autor
+## Autor
 
 **Leonardo Olivares**
 
