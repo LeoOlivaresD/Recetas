@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll, afterEach, afterAll, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { server } from '../mocks/server';
 
@@ -37,7 +37,6 @@ const mockReceta = {
 
 describe('RecipePage Component (Detalle de Receta)', () => {
   it('renderiza correctamente el componente RecipePage', async () => {
-    // Configurar el mock de useQuery para este test
     useQuery.mockReturnValue({
       loading: false,
       error: null,
@@ -52,7 +51,6 @@ describe('RecipePage Component (Detalle de Receta)', () => {
       </MemoryRouter>
     );
 
-    // Esperar y verificar que se renderice el título
     await waitFor(() => {
       expect(screen.getByText('Cazuela de Vacuno')).toBeInTheDocument();
     });
@@ -94,5 +92,241 @@ describe('RecipePage Component (Detalle de Receta)', () => {
     );
 
     expect(screen.getByText(/Volver a Recetas/i)).toBeInTheDocument();
+  });
+
+  // ✅ NUEVO: Test para estado de carga
+  it('muestra el indicador de carga mientras se obtienen los datos', () => {
+    useQuery.mockReturnValue({
+      loading: true,
+      error: null,
+      data: null
+    });
+
+    render(
+      <MemoryRouter initialEntries={['/evento/1']}>
+        <Routes>
+          <Route path="/evento/:id" element={<RecipePage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText(/Cargando.../i)).toBeInTheDocument();
+    expect(screen.getByRole('status')).toBeInTheDocument();
+  });
+
+  // ✅ NUEVO: Test para estado de error
+  it('muestra un mensaje de error cuando falla la consulta', () => {
+    useQuery.mockReturnValue({
+      loading: false,
+      error: { message: 'Error al cargar la receta' },
+      data: null
+    });
+
+    render(
+      <MemoryRouter initialEntries={['/evento/1']}>
+        <Routes>
+          <Route path="/evento/:id" element={<RecipePage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText(/Error: Error al cargar la receta/i)).toBeInTheDocument();
+  });
+
+  // ✅ NUEVO: Test para receta no encontrada
+  it('muestra un mensaje cuando no se encuentra la receta', () => {
+    useQuery.mockReturnValue({
+      loading: false,
+      error: null,
+      data: null
+    });
+
+    render(
+      <MemoryRouter initialEntries={['/evento/999']}>
+        <Routes>
+          <Route path="/evento/:id" element={<RecipePage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText(/Receta no encontrada/i)).toBeInTheDocument();
+  });
+
+  // ✅ NUEVO: Test para abrir el modal
+  it('abre el modal al hacer clic en el botón Guardar Receta', async () => {
+    useQuery.mockReturnValue({
+      loading: false,
+      error: null,
+      data: { receta: mockReceta }
+    });
+
+    render(
+      <MemoryRouter initialEntries={['/evento/1']}>
+        <Routes>
+          <Route path="/evento/:id" element={<RecipePage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Cazuela de Vacuno')).toBeInTheDocument();
+    });
+
+    const botonGuardar = screen.getByText(/Guardar Receta/i);
+    fireEvent.click(botonGuardar);
+
+    expect(screen.getByText(/¿Guardar en tus favoritos?/i)).toBeInTheDocument();
+    expect(screen.getByText(/Estás a punto de guardar/i)).toBeInTheDocument();
+  });
+
+  // ✅ NUEVO: Test para cerrar el modal con cancelar
+  it('cierra el modal al hacer clic en Cancelar', async () => {
+    useQuery.mockReturnValue({
+      loading: false,
+      error: null,
+      data: { receta: mockReceta }
+    });
+
+    render(
+      <MemoryRouter initialEntries={['/evento/1']}>
+        <Routes>
+          <Route path="/evento/:id" element={<RecipePage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Cazuela de Vacuno')).toBeInTheDocument();
+    });
+
+    // Abrir modal
+    const botonGuardar = screen.getByText(/Guardar Receta/i);
+    fireEvent.click(botonGuardar);
+
+    // Cerrar modal
+    const botonCancelar = screen.getByText(/Cancelar/i);
+    fireEvent.click(botonCancelar);
+
+    await waitFor(() => {
+      expect(screen.queryByText(/¿Guardar en tus favoritos?/i)).not.toBeInTheDocument();
+    });
+  });
+
+    // ✅ NUEVO: Test para confirmar guardado
+  it('muestra mensaje de éxito al confirmar guardado', async () => {
+    useQuery.mockReturnValue({
+      loading: false,
+      error: null,
+      data: { receta: mockReceta }
+    });
+
+    render(
+      <MemoryRouter initialEntries={['/evento/1']}>
+        <Routes>
+          <Route path="/evento/:id" element={<RecipePage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Cazuela de Vacuno')).toBeInTheDocument();
+    });
+
+    // Abrir modal
+    const botonGuardar = screen.getByRole('button', { name: /guardar receta/i });
+    fireEvent.click(botonGuardar);
+
+    await waitFor(() => {
+      expect(screen.getByText(/¿Guardar en tus favoritos?/i)).toBeInTheDocument();
+    });
+
+    // Confirmar guardado
+    const botonConfirmar = screen.getByRole('button', { name: /confirmar/i });
+    fireEvent.click(botonConfirmar);
+
+    // Verificar mensaje de éxito
+    await waitFor(() => {
+      expect(screen.getByText(/¡Receta Guardada!/i)).toBeInTheDocument();
+    }, { timeout: 3000 });
+  });
+
+    // ✅ NUEVO: Test para verificar todos los campos de la receta
+  it('renderiza todos los detalles de la receta correctamente', async () => {
+    useQuery.mockReturnValue({
+      loading: false,
+      error: null,
+      data: { receta: mockReceta }
+    });
+
+    render(
+      <MemoryRouter initialEntries={['/evento/1']}>
+        <Routes>
+          <Route path="/evento/:id" element={<RecipePage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Cazuela de Vacuno')).toBeInTheDocument();
+    });
+
+    // Verificar campos principales
+    expect(screen.getByText('Platos Principales')).toBeInTheDocument();
+    expect(screen.getByText('Un clásico plato chileno ideal para el invierno.')).toBeInTheDocument();
+    expect(screen.getByText('90 min')).toBeInTheDocument();
+    expect(screen.getByText('Media')).toBeInTheDocument();
+    
+    // Verificar ingredientes y método (texto parcial)
+    expect(screen.getByText(/Posta negra/i)).toBeInTheDocument();
+    expect(screen.getByText(/Cocer la carne/i)).toBeInTheDocument();
+  });
+
+  // ✅ NUEVO: Test para diferentes niveles de dificultad
+  it('muestra el color correcto según la dificultad', async () => {
+    const recetaFacil = { ...mockReceta, dificultad: 'Fácil' };
+    
+    useQuery.mockReturnValue({
+      loading: false,
+      error: null,
+      data: { receta: recetaFacil }
+    });
+
+    const { unmount } = render(
+      <MemoryRouter initialEntries={['/evento/1']}>
+        <Routes>
+          <Route path="/evento/:id" element={<RecipePage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Cazuela de Vacuno')).toBeInTheDocument();
+    });
+
+    const dificultad = screen.getByText('Fácil');
+    expect(dificultad).toHaveClass('text-success');
+
+    unmount();
+
+    // Test con dificultad Difícil
+    const recetaDificil = { ...mockReceta, dificultad: 'Difícil' };
+    useQuery.mockReturnValue({
+      loading: false,
+      error: null,
+      data: { receta: recetaDificil }
+    });
+
+    render(
+      <MemoryRouter initialEntries={['/evento/1']}>
+        <Routes>
+          <Route path="/evento/:id" element={<RecipePage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      const dificultadDificil = screen.getByText('Difícil');
+      expect(dificultadDificil).toHaveClass('text-danger');
+    });
   });
 });
