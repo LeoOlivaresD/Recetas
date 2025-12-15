@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import EventCard from './RecipeCard';
+import RecipeCard from './RecipeCard';
 
 // Datos de respaldo para producción (Recetas)
 const recetasMock = [
@@ -11,7 +11,7 @@ const recetasMock = [
     fecha: "2023-10-01",
     descripcion: "Un clásico plato chileno ideal para el invierno.",
     precio: 8000,
-    imagen: "images/cazuela.jpeg"
+    imagen: "/Recetas/images/cazuela.jpeg"
   },
   {
     id: 2,
@@ -21,7 +21,7 @@ const recetasMock = [
     fecha: "2023-10-02",
     descripcion: "Guiso tradicional a base de zapallo y papas.",
     precio: 5000,
-    imagen: "images/charquican.jpg"
+    imagen: "/Recetas/images/charquican.jpg"
   },
   {
     id: 3,
@@ -31,7 +31,7 @@ const recetasMock = [
     fecha: "2023-10-03",
     descripcion: "Postre de leche y huevos horneado con caramelo.",
     precio: 3000,
-    imagen: "images/lecheAsada.jpg"
+    imagen: "/Recetas/images/lecheAsada.jpg"
   },
   {
     id: 4,
@@ -41,13 +41,13 @@ const recetasMock = [
     fecha: "2023-09-18",
     descripcion: "Masa rellena de pino de carne, cebolla, huevo y aceituna.",
     precio: 2000,
-    imagen: "images/empanadas.avif"
+    imagen: "/Recetas/images/empanadas.avif"
   }
 ];
 
 const isDevelopment = import.meta.env.DEV;
 
-export default function EventList() {
+export default function RecipeList() {
   const [recetas, setRecetas] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
@@ -119,8 +119,7 @@ export default function EventList() {
       <div className="row g-4">
         {recetas.map(receta => (
           <div key={receta.id} className="col-lg-6 col-xl-4">
-            {/* Pasamos el objeto receta como prop 'evento' para mantener compatibilidad con la tarjeta por ahora */}
-            <EventCard evento={receta} />
+            <RecipeCard evento={receta} />
           </div>
         ))}
       </div>

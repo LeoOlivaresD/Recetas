@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-export default function EventCard({ evento: receta }) {
+export default function RecipeCard({ evento: receta }) {
   // Nota: Recibimos la prop como 'evento' (desde el padre) 
   // pero la renombramos a 'receta' internamente para mayor claridad en este componente.
 
@@ -64,8 +64,7 @@ export default function EventCard({ evento: receta }) {
 
       {/* Footer */}
       <div className="card-footer bg-white border-top">
-        {/* Mantenemos el link a /evento/ por ahora para no romper la navegación hasta el siguiente paso */}
-        <Link to={`/evento/${receta.id}`} className="btn btn-primary btn-sm w-100">
+        <Link to={`/receta/${receta.id}`} className="btn btn-primary btn-sm w-100">
           Ver Detalles
         </Link>
       </div>

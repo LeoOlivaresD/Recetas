@@ -40,7 +40,7 @@ describe('RecipeCard Component', () => {
     
     // Verificar que el enlace apunta a la ruta correcta
     const link = screen.getByRole('link', { name: /ver detalles/i });
-    expect(link).toHaveAttribute('href', '/evento/1');
+    expect(link).toHaveAttribute('href', '/receta/1');
   });
 
   it('renderiza el placeholder cuando no hay imagen', () => {

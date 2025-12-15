@@ -1,22 +1,10 @@
+import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import App from './App.jsx'
 import './index.css'
-import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client';
-import { ApolloProvider } from '@apollo/client/react';
-
-// Habilitar mocking
-async function enableMocking() {
-  if (import.meta.env.DEV) {
-    const { worker } = await import('./mocks/browser');
-    return worker.start({
-      onUnhandledRequest: 'bypass',
-      serviceWorker: {
-        url: '/Front-Eventos/mockServiceWorker.js'
-      }
-    });
-  }
-}
+import App from './App.jsx'
+import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client'
+import { ApolloProvider } from '@apollo/client/react'
 
 // Configurar Apollo Client
 const client = new ApolloClient({
@@ -24,10 +12,27 @@ const client = new ApolloClient({
   cache: new InMemoryCache()
 });
 
+async function enableMocking() {
+  // Solo habilitar MSW en desarrollo
+  if (import.meta.env.DEV) {
+    const { worker } = await import('./mocks/browser')
+    
+    // Configurar con la ruta base correcta
+    return worker.start({
+      serviceWorker: {
+        url: '/Recetas/mockServiceWorker.js'
+      },
+      onUnhandledRequest: 'bypass'
+    })
+  }
+}
+
 enableMocking().then(() => {
   createRoot(document.getElementById('root')).render(
-    <ApolloProvider client={client}>
-      <App />
-    </ApolloProvider>
+    <StrictMode>
+      <ApolloProvider client={client}>
+        <App />
+      </ApolloProvider>
+    </StrictMode>
   )
-});
+})

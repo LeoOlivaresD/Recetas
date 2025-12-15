@@ -1,16 +1,7 @@
-import { useState, useEffect } from 'react';
-import EventList from '../components/RecipeList';
+import RecipeList from '../components/RecipeList';
 
 export default function Home() {
-  //Agregamos lógica rastreable para V8
-  const [isLoaded, setIsLoaded] = useState(false);
-
-  useEffect(() => {
-    // Marca el componente como cargado
-    setIsLoaded(true);
-  }, []);
-
-  // Estilos extraídos a variables para que V8 los rastree
+  // Estilos extraídos a variables
   const mainStyles = {
     background: 'linear-gradient(180deg, #fff1eb 0%, #ace0f9 100%)',
     minHeight: '100vh',
@@ -47,7 +38,7 @@ export default function Home() {
 
       <main className="py-5">
         <div className="container">
-          {isLoaded && <EventList />}
+          <RecipeList />
         </div>
       </main>
     </div>

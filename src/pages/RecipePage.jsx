@@ -16,7 +16,7 @@ const recetasMock = [
     metodo: "Cocer la carne con verduras, agregar papas y zapallo, finalmente el choclo y arroz.",
     tiempo: "90 min",
     precio: 8000,
-    imagen: "images/cazuela.jpeg"
+    imagen: "/Recetas/images/cazuela.jpeg"
   },
   {
     id: 2,
@@ -29,7 +29,7 @@ const recetasMock = [
     metodo: "Sofreír cebolla y carne, agregar papas y zapallo cocidos y molidos, finalizar con acelga.",
     tiempo: "45 min",
     precio: 5000,
-    imagen: "images/charquican.jpg"
+    imagen: "/Recetas/images/charquican.jpg"
   },
   {
     id: 3,
@@ -42,7 +42,7 @@ const recetasMock = [
     metodo: "Batir ingredientes, verter sobre molde caramelizado y hornear a baño maría.",
     tiempo: "60 min",
     precio: 3000,
-    imagen: "images/lecheAsada.jpg"
+    imagen: "/Recetas/images/lecheAsada.jpg"
   },
   {
     id: 4,
@@ -55,7 +55,7 @@ const recetasMock = [
     metodo: "Preparar el pino el día anterior. Hacér la masa, rellenar y hornear.",
     tiempo: "120 min",
     precio: 2000,
-    imagen: "images/empanadas.avif"
+    imagen: "/Recetas/images/empanadas.avif"
   }
 ];
 
@@ -79,7 +79,6 @@ const GET_RECETA = gql`
   }
 `;
 
-// ✅ CAMBIO IMPORTANTE: Renombrar función de EventPage a RecipePage
 export default function RecipePage() {
   const { id } = useParams();
   const [mostrarModal, setMostrarModal] = useState(false);
@@ -340,7 +339,6 @@ export default function RecipePage() {
             ) : (
               <div style={{ textAlign: 'center' }}>
                 <div style={{ fontSize: '48px', marginBottom: '16px' }}>
-                  ✅
                 </div>
                 <h3 className="text-success mb-3">
                   ¡Receta Guardada!
