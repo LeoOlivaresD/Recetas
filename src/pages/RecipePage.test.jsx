@@ -1,94 +1,98 @@
-import { describe, it, expect } from 'vitest';
-
-describe('RecipePage Component (Detalle de Receta)', () => {
-  it('placeholder test - RecipePage funciona en dev y producción', () => {
-    // Los tests de RecipePage tienen problemas de importación en el ambiente de Vitest
-    // pero el componente funciona correctamente en desarrollo y producción.
-    // Por ahora, mantenemos un test placeholder para evitar fallos.
-    expect(true).toBe(true);
-  });
-});
-
-/* 
-  NOTA: Los siguientes tests están comentados debido a problemas de resolución
-  de módulos en Vitest. El componente RecipePage funciona correctamente en:
-  - npm run dev
-  - npm run build
-  - npm run preview
-  - Producción en GitHub Pages
-  
-  Si deseas habilitarlos, descomenta el código a continuación:
-
-import { render, screen } from '@testing-library/react';
-import { beforeAll, afterEach, afterAll } from 'vitest';
-import { ApolloClient, InMemoryCache, ApolloProvider, HttpLink } from '@apollo/client';
+import { describe, it, expect, beforeAll, afterEach, afterAll, vi } from 'vitest';
+import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import RecipePage from './RecipePage';
 import { server } from '../mocks/server';
-import { graphql, HttpResponse } from 'msw';
 
+// Mock de Apollo Client antes de importar el componente
+vi.mock('@apollo/client/react', () => ({
+  useQuery: vi.fn(),
+  ApolloProvider: ({ children }) => children,
+}));
+
+// Importar después del mock
+import RecipePage from './RecipePage';
+import { useQuery } from '@apollo/client/react';
+
+// Configuración de MSW
 beforeAll(() => server.listen());
-afterEach(() => server.resetHandlers());
+afterEach(() => {
+  server.resetHandlers();
+  vi.clearAllMocks();
+});
 afterAll(() => server.close());
 
-const createTestClient = () => {
-  return new ApolloClient({
-    link: new HttpLink({ uri: '/graphql', fetch }),
-    cache: new InMemoryCache({ addTypename: false }),
-  });
+// Datos mock de una receta
+const mockReceta = {
+  id: 1,
+  titulo: "Cazuela de Vacuno",
+  dificultad: "Media",
+  categoria: "Platos Principales",
+  descripcion: "Un clásico plato chileno ideal para el invierno.",
+  ingredientes: "Posta negra, papas, zapallo, choclo, porotos verdes, arroz",
+  metodo: "Cocer la carne con verduras, agregar papas y zapallo, finalmente el choclo y arroz.",
+  tiempo: "90 min",
+  precio: 8000,
+  imagen: "images/cazuela.jpeg"
 };
 
 describe('RecipePage Component (Detalle de Receta)', () => {
-  it('muestra el estado de carga inicialmente', () => {
+  it('renderiza correctamente el componente RecipePage', async () => {
+    // Configurar el mock de useQuery para este test
+    useQuery.mockReturnValue({
+      loading: false,
+      error: null,
+      data: { receta: mockReceta }
+    });
+
     render(
-      <ApolloProvider client={createTestClient()}>
-        <MemoryRouter initialEntries={['/evento/1']}>
-          <Routes>
-            <Route path="/evento/:id" element={<RecipePage />} />
-          </Routes>
-        </MemoryRouter>
-      </ApolloProvider>
+      <MemoryRouter initialEntries={['/evento/1']}>
+        <Routes>
+          <Route path="/evento/:id" element={<RecipePage />} />
+        </Routes>
+      </MemoryRouter>
     );
-    
-    expect(screen.getByText(/cargando/i)).toBeInTheDocument();
+
+    // Esperar y verificar que se renderice el título
+    await waitFor(() => {
+      expect(screen.getByText('Cazuela de Vacuno')).toBeInTheDocument();
+    });
   });
 
-  it('renderiza correctamente los detalles de la receta desde GraphQL', async () => {
+  it('muestra el botón de guardar receta', async () => {
+    useQuery.mockReturnValue({
+      loading: false,
+      error: null,
+      data: { receta: mockReceta }
+    });
+
     render(
-      <ApolloProvider client={createTestClient()}>
-        <MemoryRouter initialEntries={['/evento/1']}>
-          <Routes>
-            <Route path="/evento/:id" element={<RecipePage />} />
-          </Routes>
-        </MemoryRouter>
-      </ApolloProvider>
+      <MemoryRouter initialEntries={['/evento/1']}>
+        <Routes>
+          <Route path="/evento/:id" element={<RecipePage />} />
+        </Routes>
+      </MemoryRouter>
     );
 
-    expect(await screen.findByText('Cazuela de Vacuno', {}, { timeout: 3000 })).toBeInTheDocument();
-    expect(screen.getByText('Media')).toBeInTheDocument();
-    expect(screen.getByText(/90 min/)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText(/Guardar Receta/i)).toBeInTheDocument();
+    });
   });
 
-  it('maneja el error cuando la receta no existe', async () => {
-    server.use(
-      graphql.query('GetRecetaById', () => {
-        return HttpResponse.json({ 
-          errors: [{ message: 'Receta no encontrada' }] 
-        });
-      })
-    );
+  it('muestra el enlace para volver a la lista', async () => {
+    useQuery.mockReturnValue({
+      loading: false,
+      error: null,
+      data: { receta: mockReceta }
+    });
 
     render(
-      <ApolloProvider client={createTestClient()}>
-        <MemoryRouter initialEntries={['/evento/999']}>
-          <Routes>
-            <Route path="/evento/:id" element={<RecipePage />} />
-          </Routes>
-        </MemoryRouter>
-      </ApolloProvider>
+      <MemoryRouter initialEntries={['/evento/1']}>
+        <Routes>
+          <Route path="/evento/:id" element={<RecipePage />} />
+        </Routes>
+      </MemoryRouter>
     );
 
-    expect(await screen.findByText(/Error:/i, {}, { timeout: 3000 })).toBeInTheDocument();
+    expect(screen.getByText(/Volver a Recetas/i)).toBeInTheDocument();
   });
 });
-*/
