@@ -20,42 +20,6 @@ export default function Footer() {
 
           <div className="col-md-4 mb-3">
             <h5 className="fw-bold mb-3" style={{ color: '#667eea' }}>
-              Enlaces Rápidos
-            </h5>
-            <ul className="list-unstyled">
-              <li style={{ marginBottom: '0.5rem' }}>
-                <a href="#" style={{ color: 'rgba(255,255,255,0.7)', textDecoration: 'none', transition: 'color 0.3s ease' }} 
-                   onMouseEnter={(e) => e.target.style.color = '#667eea'}
-                   onMouseLeave={(e) => e.target.style.color = 'rgba(255,255,255,0.7)'}>
-                  Inicio
-                </a>
-              </li>
-              <li style={{ marginBottom: '0.5rem' }}>
-                <a href="#" style={{ color: 'rgba(255,255,255,0.7)', textDecoration: 'none', transition: 'color 0.3s ease' }}
-                   onMouseEnter={(e) => e.target.style.color = '#667eea'}
-                   onMouseLeave={(e) => e.target.style.color = 'rgba(255,255,255,0.7)'}>
-                  Recetas
-                </a>
-              </li>
-              <li style={{ marginBottom: '0.5rem' }}>
-                <a href="#" style={{ color: 'rgba(255,255,255,0.7)', textDecoration: 'none', transition: 'color 0.3s ease' }}
-                   onMouseEnter={(e) => e.target.style.color = '#667eea'}
-                   onMouseLeave={(e) => e.target.style.color = 'rgba(255,255,255,0.7)'}>
-                  Contacto
-                </a>
-              </li>
-              <li>
-                <a href="#" style={{ color: 'rgba(255,255,255,0.7)', textDecoration: 'none', transition: 'color 0.3s ease' }}
-                   onMouseEnter={(e) => e.target.style.color = '#667eea'}
-                   onMouseLeave={(e) => e.target.style.color = 'rgba(255,255,255,0.7)'}>
-                  Términos y Condiciones
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          <div className="col-md-4 mb-3">
-            <h5 className="fw-bold mb-3" style={{ color: '#667eea' }}>
               Síguenos
             </h5>
             <div className="d-flex gap-3 flex-wrap">
