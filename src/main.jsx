@@ -6,18 +6,18 @@ import App from './App.jsx'
 import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client'
 import { ApolloProvider } from '@apollo/client/react'
 
-// Configurar Apollo Client
+// Configuracion Apollo Client
 const client = new ApolloClient({
   link: new HttpLink({ uri: "/graphql" }),
   cache: new InMemoryCache()
 });
 
 async function enableMocking() {
-  // Solo habilitar MSW en desarrollo
+  // Se habilita MSW en desarrollo
   if (import.meta.env.DEV) {
     const { worker } = await import('./mocks/browser')
     
-    // Configurar con la ruta base correcta
+    // Configuracion con la ruta base
     return worker.start({
       serviceWorker: {
         url: '/Recetas/mockServiceWorker.js'

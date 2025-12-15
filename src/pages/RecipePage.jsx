@@ -280,7 +280,7 @@ export default function RecipePage() {
                 letterSpacing: '0.5px'
               }}
             >
-              ❤️ Guardar Receta
+              Guardar Receta
             </button>
           </div>
         </div>

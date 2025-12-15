@@ -83,7 +83,7 @@ export default function Footer() {
         <div className="row align-items-center">
           <div className="col-md-6">
             <p style={{ color: 'rgba(255,255,255,0.6)', marginBottom: '0', fontSize: '0.9rem' }}>
-              &copy; {currentYear} Centro de Eventos. Todos los derechos reservados.
+              &copy; {currentYear} Centro de Recetas. Todos los derechos reservados.
             </p>
           </div>
           <div className="col-md-6 text-md-end" style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.9rem' }}>
